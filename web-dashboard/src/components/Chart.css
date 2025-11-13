@@ -1,0 +1,11 @@
+.chart-wrapper {
+  height: 400px;
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  .chart-wrapper {
+    height: 300px;
+  }
+}
+

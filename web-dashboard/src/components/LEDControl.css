@@ -1,0 +1,119 @@
+.led-control {
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.led-control h3 {
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 1.3rem;
+}
+
+.led-control label {
+  display: block;
+  margin-bottom: 10px;
+  color: #666;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.color-picker-section {
+  margin-bottom: 20px;
+}
+
+.color-preview {
+  width: 100%;
+  height: 60px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 2px solid #e0e0e0;
+}
+
+.color-preview span {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.preset-colors {
+  margin-bottom: 20px;
+}
+
+.preset-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+}
+
+.preset-color-btn {
+  width: 100%;
+  aspect-ratio: 1;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.preset-color-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.brightness-control {
+  margin-top: 20px;
+}
+
+.brightness-slider {
+  width: 100%;
+  height: 8px;
+  border-radius: 5px;
+  background: #e0e0e0;
+  outline: none;
+  margin: 10px 0;
+  -webkit-appearance: none;
+}
+
+.brightness-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #667eea;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.brightness-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #667eea;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.brightness-indicator {
+  width: 100%;
+  height: 8px;
+  background: #e0e0e0;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-top: 5px;
+}
+
+.brightness-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  transition: width 0.3s ease;
+}
+

@@ -1,0 +1,38 @@
+# Arduino/ESP32 build files
+*.hex
+*.elf
+*.bin
+*.map
+*.eep
+*.lss
+*.sym
+*.su
+*.d
+*.o
+*.a
+*.la
+*.lo
+*.slo
+*.so
+*.dylib
+*.dll
+*.exe
+*.out
+*.app
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Configuration files with sensitive data
+*_config.h
+*_credentials.h
+firebase_config.h
+
+# OS files
+.DS_Store
+Thumbs.db
+
