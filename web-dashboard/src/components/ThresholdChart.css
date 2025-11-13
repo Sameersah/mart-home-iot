@@ -1,0 +1,16 @@
+.threshold-chart-wrapper {
+  height: 100%;
+  position: relative;
+  width: 100%;
+}
+
+.threshold-chart-wrapper canvas {
+  max-height: 100% !important;
+}
+
+@media (max-width: 768px) {
+  .threshold-chart-wrapper {
+    height: 100%;
+  }
+}
+

@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { database } from './firebase';
 import { ref, onValue } from 'firebase/database';
 import SensorCard from './components/SensorCard';
 import Chart from './components/Chart';
+import BarChart from './components/BarChart';
+import StatisticsCard from './components/StatisticsCard';
 import './App.css';
 
 function App() {
@@ -11,6 +13,7 @@ function App() {
   });
   
   const [chartData, setChartData] = useState([]);
+  const THRESHOLD = 1800;
 
   // Listen to real-time sensor data
   useEffect(() => {
@@ -30,14 +33,28 @@ function App() {
             time: timestamp,
             light: data.light || 0
           }];
-          // Keep only last 30 data points for better visualization
-          return newData.slice(-30);
+          // Keep last 50 data points for better visualization
+          return newData.slice(-50);
         });
       }
     });
 
     return () => unsubscribe();
   }, []);
+
+  // Calculate statistics from chart data
+  const statistics = useMemo(() => {
+    if (chartData.length === 0) {
+      return { min: 0, max: 0, avg: 0, current: sensors.light };
+    }
+    const values = chartData.map(d => d.light);
+    return {
+      min: Math.min(...values),
+      max: Math.max(...values),
+      avg: Math.round(values.reduce((a, b) => a + b, 0) / values.length),
+      current: sensors.light
+    };
+  }, [chartData, sensors.light]);
 
   // Get light status based on value
   const getLightStatus = (value) => {
@@ -75,16 +92,62 @@ function App() {
           />
         </div>
 
-        {/* Chart */}
+        {/* Statistics Cards */}
+        <div className="statistics-section">
+          <StatisticsCard
+            title="Current"
+            value={statistics.current}
+            icon="📊"
+            color="#6366f1"
+          />
+          <StatisticsCard
+            title="Average"
+            value={statistics.avg}
+            icon="📈"
+            color="#8b5cf6"
+          />
+          <StatisticsCard
+            title="Minimum"
+            value={statistics.min}
+            icon="📉"
+            color="#ec4899"
+          />
+          <StatisticsCard
+            title="Maximum"
+            value={statistics.max}
+            icon="📊"
+            color="#10b981"
+          />
+        </div>
+
+        {/* Main Trend Chart with Threshold */}
         <div className="chart-section">
           <div className="section-header">
             <h2>Light Level Trends</h2>
-            <span className="status-badge" style={{ backgroundColor: lightStatus.color }}>
-              {lightStatus.text}
+            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+              <span className="status-badge" style={{ backgroundColor: lightStatus.color }}>
+                {lightStatus.text}
+              </span>
+              <span className="threshold-indicator">
+                Threshold: {THRESHOLD}
+              </span>
+            </div>
+          </div>
+          <div className="chart-container">
+            <Chart data={chartData} threshold={THRESHOLD} />
+          </div>
+        </div>
+
+        {/* Bar Chart */}
+        <div className="chart-section">
+          <div className="section-header">
+            <h2>Recent Readings Distribution</h2>
+            <span className="status-badge" style={{ backgroundColor: '#6366f1' }}>
+              Last 10 Readings
             </span>
           </div>
           <div className="chart-container">
-            <Chart data={chartData} />
+            <BarChart data={chartData} />
           </div>
         </div>
       </main>

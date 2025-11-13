@@ -11,7 +11,7 @@ import {
   Filler
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
-import './Chart.css';
+import './ThresholdChart.css';
 
 ChartJS.register(
   CategoryScale,
@@ -24,7 +24,7 @@ ChartJS.register(
   Filler
 );
 
-const Chart = ({ data, threshold = 1800 }) => {
+const ThresholdChart = ({ data, threshold = 1800 }) => {
   const chartData = {
     labels: data.map(d => d.time),
     datasets: [
@@ -35,12 +35,12 @@ const Chart = ({ data, threshold = 1800 }) => {
         backgroundColor: 'rgba(99, 102, 241, 0.1)',
         fill: true,
         tension: 0.4,
-        pointRadius: 4,
-        pointHoverRadius: 6,
+        pointRadius: 3,
+        pointHoverRadius: 5,
         pointBackgroundColor: data.map(d => d.light < threshold ? '#E74C3C' : '#6366f1'),
         pointBorderColor: '#ffffff',
         pointBorderWidth: 2,
-        borderWidth: 3,
+        borderWidth: 2,
       },
       {
         label: 'Threshold',
@@ -51,7 +51,6 @@ const Chart = ({ data, threshold = 1800 }) => {
         borderWidth: 2,
         fill: false,
         pointRadius: 0,
-        pointHoverRadius: 0,
       },
     ],
   };
@@ -73,9 +72,6 @@ const Chart = ({ data, threshold = 1800 }) => {
           color: '#64748b',
         },
       },
-      title: {
-        display: false,
-      },
       tooltip: {
         mode: 'index',
         intersect: false,
@@ -94,13 +90,12 @@ const Chart = ({ data, threshold = 1800 }) => {
         borderColor: '#6366f1',
         borderWidth: 1,
         cornerRadius: 8,
-        displayColors: true,
         callbacks: {
           label: function(context) {
             if (context.datasetIndex === 0) {
               const value = context.parsed.y;
-              const status = value < threshold ? '⚠️ Below Threshold' : '✅ Above Threshold';
-              return [`Light: ${value}`, status];
+              const status = value < threshold ? '⚠️ Below' : '✅ Above';
+              return `${context.dataset.label}: ${value} ${status}`;
             }
             return `${context.dataset.label}: ${context.parsed.y}`;
           }
@@ -111,9 +106,6 @@ const Chart = ({ data, threshold = 1800 }) => {
       y: {
         beginAtZero: true,
         max: 4095,
-        title: {
-          display: false,
-        },
         grid: {
           color: 'rgba(226, 232, 240, 0.8)',
           lineWidth: 1,
@@ -152,11 +144,11 @@ const Chart = ({ data, threshold = 1800 }) => {
   };
 
   return (
-    <div className="chart-wrapper">
+    <div className="threshold-chart-wrapper">
       <Line data={chartData} options={options} />
     </div>
   );
 };
 
-export default Chart;
+export default ThresholdChart;
 
