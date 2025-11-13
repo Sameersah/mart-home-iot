@@ -31,12 +31,16 @@ const Chart = ({ data }) => {
       {
         label: 'Light Level',
         data: data.map(d => d.light),
-        borderColor: 'rgb(255, 230, 109)',
-        backgroundColor: 'rgba(255, 230, 109, 0.1)',
+        borderColor: '#6366f1',
+        backgroundColor: 'rgba(99, 102, 241, 0.1)',
         fill: true,
         tension: 0.4,
-        pointRadius: 3,
-        pointHoverRadius: 5,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+        pointBackgroundColor: '#6366f1',
+        pointBorderColor: '#ffffff',
+        pointBorderWidth: 2,
+        borderWidth: 3,
       },
     ],
   };
@@ -46,58 +50,67 @@ const Chart = ({ data }) => {
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: 'top',
-        labels: {
-          usePointStyle: true,
-          padding: 15,
-          font: {
-            size: 12,
-            weight: '500',
-          },
-        },
+        display: false,
       },
       title: {
-        display: true,
-        text: 'Real-time Sensor Data',
-        font: {
-          size: 18,
-          weight: 'bold',
-        },
-        padding: {
-          bottom: 20,
-        },
+        display: false,
       },
       tooltip: {
         mode: 'index',
         intersect: false,
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        backgroundColor: 'rgba(30, 41, 59, 0.95)',
         padding: 12,
         titleFont: {
-          size: 14,
+          size: 13,
+          weight: '600',
         },
         bodyFont: {
-          size: 12,
+          size: 13,
+          weight: '500',
         },
+        titleColor: '#f1f5f9',
+        bodyColor: '#ffffff',
+        borderColor: '#6366f1',
+        borderWidth: 1,
+        cornerRadius: 8,
+        displayColors: true,
+        callbacks: {
+          label: function(context) {
+            return `Light: ${context.parsed.y}`;
+          }
+        }
       },
     },
     scales: {
       y: {
         beginAtZero: true,
         title: {
-          display: true,
-          text: 'Light Level',
-          font: {
-            size: 12,
-            weight: '500',
-          },
+          display: false,
         },
         grid: {
-          color: 'rgba(0, 0, 0, 0.05)',
+          color: 'rgba(226, 232, 240, 0.8)',
+          lineWidth: 1,
+        },
+        ticks: {
+          font: {
+            size: 11,
+            weight: '500',
+          },
+          color: '#64748b',
         },
       },
       x: {
         grid: {
-          color: 'rgba(0, 0, 0, 0.05)',
+          display: false,
+        },
+        ticks: {
+          font: {
+            size: 11,
+            weight: '500',
+          },
+          color: '#64748b',
+          maxRotation: 45,
+          minRotation: 0,
         },
       },
     },

@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { database } from './firebase';
-import { ref, onValue, set } from 'firebase/database';
+import { ref, onValue } from 'firebase/database';
 import SensorCard from './components/SensorCard';
 import Chart from './components/Chart';
-import LEDControl from './components/LEDControl';
-import DeviceControl from './components/DeviceControl';
 import './App.css';
 
 function App() {
@@ -13,9 +11,6 @@ function App() {
   });
   
   const [chartData, setChartData] = useState([]);
-  const [ledColor, setLedColor] = useState('#FF0000');
-  const [ledBrightness, setLedBrightness] = useState(100);
-  const [relayState, setRelayState] = useState(false);
 
   // Listen to real-time sensor data
   useEffect(() => {
@@ -35,8 +30,8 @@ function App() {
             time: timestamp,
             light: data.light || 0
           }];
-          // Keep only last 20 data points
-          return newData.slice(-20);
+          // Keep only last 30 data points for better visualization
+          return newData.slice(-30);
         });
       }
     });
@@ -44,71 +39,52 @@ function App() {
     return () => unsubscribe();
   }, []);
 
-  // Handle LED color change
-  const handleLEDColorChange = (color) => {
-    setLedColor(color.hex);
-    set(ref(database, 'controls/led_color'), color.hex);
+  // Get light status based on value
+  const getLightStatus = (value) => {
+    if (value < 500) return { text: 'Very Dark', color: '#2C3E50' };
+    if (value < 1000) return { text: 'Dark', color: '#34495E' };
+    if (value < 2000) return { text: 'Moderate', color: '#F39C12' };
+    if (value < 3000) return { text: 'Bright', color: '#F1C40F' };
+    return { text: 'Very Bright', color: '#FFE66D' };
   };
 
-  // Handle LED brightness change
-  const handleLEDBrightnessChange = (brightness) => {
-    setLedBrightness(brightness);
-    set(ref(database, 'controls/led_brightness'), brightness);
-  };
-
-  // Handle relay toggle
-  const handleRelayToggle = (state) => {
-    setRelayState(state);
-    set(ref(database, 'controls/relay_state'), state);
-  };
-
-  // Handle buzzer
-  const handleBuzzer = () => {
-    set(ref(database, 'controls/buzzer'), true);
-    setTimeout(() => {
-      set(ref(database, 'controls/buzzer'), false);
-    }, 100);
-  };
+  const lightStatus = getLightStatus(sensors.light);
 
   return (
     <div className="App">
       <header className="App-header">
-        <h1>🏠 IoT Smart Home Control</h1>
-        <p>Real-time monitoring and control</p>
+        <div className="header-content">
+          <div className="header-icon">💡</div>
+          <div>
+            <h1>Light Monitoring System</h1>
+            <p>Real-time light level tracking and analysis</p>
+          </div>
+        </div>
       </header>
 
       <main className="dashboard">
-        {/* Sensor Cards */}
-        <div className="sensor-grid">
+        {/* Sensor Card */}
+        <div className="sensor-section">
           <SensorCard
             label="Light Level"
             value={sensors.light}
             unit=""
             icon="💡"
-            color="#FFE66D"
+            color={lightStatus.color}
+            status={lightStatus.text}
           />
         </div>
 
-        {/* Charts */}
-        <div className="chart-container">
-          <Chart data={chartData} />
-        </div>
-
-        {/* Control Panel */}
-        <div className="control-panel">
-          <h2>Device Controls</h2>
-          <div className="controls-grid">
-            <LEDControl
-              color={ledColor}
-              brightness={ledBrightness}
-              onColorChange={handleLEDColorChange}
-              onBrightnessChange={handleLEDBrightnessChange}
-            />
-            <DeviceControl
-              relayState={relayState}
-              onRelayToggle={handleRelayToggle}
-              onBuzzer={handleBuzzer}
-            />
+        {/* Chart */}
+        <div className="chart-section">
+          <div className="section-header">
+            <h2>Light Level Trends</h2>
+            <span className="status-badge" style={{ backgroundColor: lightStatus.color }}>
+              {lightStatus.text}
+            </span>
+          </div>
+          <div className="chart-container">
+            <Chart data={chartData} />
           </div>
         </div>
       </main>
