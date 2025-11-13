@@ -1,22 +1,40 @@
 /*
- * IoT Smart Home Sensors - ESP32 Firmware
+ * IoT-Based Light Intensity Monitoring System for Food and Beverage Optical Inspection
+ * ESP32 Firmware
+ * 
+ * Purpose:
+ * This system monitors light intensity in optical inspection environments to ensure
+ * consistent illumination for food and beverage quality control systems.
  * 
  * Features:
- * - Reads photoresistor light sensor with detailed debug logging
- * - Uploads data to Firebase via WiFi
+ * - Continuous light intensity monitoring (photoresistor sensor)
+ * - Real-time alert system (RGB LED indicator)
+ * - Cloud data logging (Firebase Realtime Database)
+ * - Email notifications via Firebase Cloud Functions
+ * 
+ * Alert Logic:
+ * - Light Level < 1800: RED LED (Alert - below threshold)
+ * - Light Level >= 1800: GREEN LED (Normal operation)
+ * - Email alert sent when threshold is crossed
  * 
  * Hardware Connections:
- * - Light Sensor: Pin 34 (ADC)
+ * - Light Sensor (Photoresistor): GPIO 34 (ADC)
  *   - Photoresistor leg 1 → 3.3V
  *   - Photoresistor leg 2 → Breadboard row (junction)
  *   - 10kΩ Resistor leg 1 → Same breadboard row (junction)
  *   - 10kΩ Resistor leg 2 → GND
  *   - Wire from junction → GPIO 34
  * 
- * - RGB LED:
- *   - Common Cathode: Red/Green/Blue → GPIO 25/26/27 (with 220Ω resistors each)
- *   - Common Anode: Red/Green/Blue → GPIO 25/26/27 (with 220Ω resistors each)
- *   - Common pin → GND (cathode) or 3.3V (anode)
+ * - RGB LED (Alert Indicator): GPIO 25/26/27
+ *   - Red → GPIO 25 (with 220Ω resistor)
+ *   - Green → GPIO 26 (with 220Ω resistor)
+ *   - Blue → GPIO 27 (with 220Ω resistor)
+ *   - Common → GND (common cathode)
+ * 
+ * Use Case:
+ * Deployed in food and beverage manufacturing facilities to monitor illumination
+ * in optical sorting and inspection systems. Prevents quality issues caused by
+ * lighting degradation.
  */
 
  #include <WiFi.h>
@@ -69,8 +87,9 @@
    Serial.begin(115200);
    delay(1000);
    
-   Serial.println("\n=== IoT Smart Home Sensors Starting ===");
-   Serial.println("Reading sensor: Photoresistor (GPIO 34)");
+  Serial.println("\n=== Light Intensity Monitoring System Starting ===");
+  Serial.println("Food & Beverage Optical Inspection Monitor");
+  Serial.println("Reading sensor: Photoresistor (GPIO 34)");
    
    // Connect to WiFi
    WiFi.begin(ssid, password);
@@ -238,17 +257,18 @@
    Serial.println("\n[Updating RGB LED based on light level...]");
    Serial.printf("   📊 Current light level: %d\n", lightLevel);
    
-   // Map light level to different colors
-   // Adjusted thresholds based on typical photoresistor readings
-   if (lightLevel < 1800) {
-     // Dark -> red
-     setRGBColor(255, 0, 0);
-     Serial.printf("   💡 Condition: Dark (< 1800) -> RED | Light Level: %d\n", lightLevel);
-   } else if (lightLevel >= 1800) {
-     // bright -> green
-     setRGBColor(0, 255, 0);
-     Serial.printf("   💡 Condition: bright (>= 1800) -> GREEN | Light Level: %d\n", lightLevel);
-   } 
+  // Alert system for optical inspection monitoring
+  // Threshold: 1800 (below this value indicates insufficient illumination)
+  if (lightLevel < 1800) {
+    // Below threshold -> RED alert (insufficient light for inspection)
+    setRGBColor(255, 0, 0);
+    Serial.printf("   ⚠️  ALERT: Light below threshold (< 1800) -> RED LED | Light Level: %d\n", lightLevel);
+    Serial.println("   Action Required: Check inspection system lighting!");
+  } else if (lightLevel >= 1800) {
+    // Above threshold -> GREEN (normal operation)
+    setRGBColor(0, 255, 0);
+    Serial.printf("   ✅ NORMAL: Light above threshold (>= 1800) -> GREEN LED | Light Level: %d\n", lightLevel);
+  }
  }
  
  void readPhotoresistor() {

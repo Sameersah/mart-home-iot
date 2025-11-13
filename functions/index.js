@@ -1,9 +1,14 @@
 /**
- * Firebase Cloud Functions for IoT Smart Home
+ * Firebase Cloud Functions for Light Intensity Monitoring System
+ * Food and Beverage Optical Inspection Application
  *
  * Function: sendLightAlert
- * Triggers when light sensor value drops below 1800
- * Sends email notification to sameersah7365@gmail.com
+ * Purpose: Monitor light intensity and send email alerts when illumination
+ *          drops below operational threshold (1800)
+ * 
+ * Triggers: When light sensor value drops below 1800 (from ≥ 1800 to < 1800)
+ * Action: Sends email notification to operators/maintenance personnel
+ * Recipient: sameersah7365@gmail.com (configurable)
  */
 
 const functions = require("firebase-functions");
@@ -59,36 +64,63 @@ exports.sendLightAlert = functions.database
         const mailOptions = {
           from: EMAIL_CONFIG.auth.user,
           to: "sameersah7365@gmail.com",
-          subject: "Light Level Alert - Low Light Detected",
+          subject: "⚠️ ALERT: Light Intensity Below Threshold - Optical Inspection System",
           html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px;">
-              <h2 style="color: #FF6B6B;">Light Level Alert</h2>
-              <p>The light level has dropped below the threshold!</p>
-              <div style="background-color: #F8F9FA; padding: 20px;">
-                <h3>Sensor Details:</h3>
+              <h2 style="color: #E74C3C;">⚠️ Light Intensity Alert</h2>
+              <p style="font-size: 16px; color: #2C3E50;">
+                <strong>Action Required:</strong> Light intensity has dropped below operational threshold.
+                Inspection system accuracy may be compromised.
+              </p>
+              <div style="background-color: #F8F9FA; padding: 20px; border-left: 4px solid #E74C3C; margin: 20px 0;">
+                <h3 style="color: #2C3E50; margin-top: 0;">Inspection System Details:</h3>
                 <p><strong>Current Light Level:</strong>
-                  <span style="color: #FF6B6B;">${newValue}</span>
+                  <span style="color: #E74C3C; font-size: 1.2em; font-weight: bold;">${newValue}</span>
+                  <span style="color: #7F8C8D; font-size: 0.9em;"> (ADC value, range: 0-4095)</span>
                 </p>
                 <p><strong>Previous Light Level:</strong> ${previousValue}</p>
-                <p><strong>Threshold:</strong> 1800</p>
+                <p><strong>Operational Threshold:</strong> 1800</p>
+                <p><strong>Status:</strong> <span style="color: #E74C3C; font-weight: bold;">BELOW THRESHOLD</span></p>
                 <p><strong>Alert Time:</strong> ${timestamp}</p>
               </div>
-              <p style="color: #666;">
-                Automated alert from IoT Smart Home system.
+              <div style="background-color: #FFF3CD; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                <p style="margin: 0; color: #856404;">
+                  <strong>⚠️ Recommended Actions:</strong><br>
+                  1. Check inspection system lighting fixtures<br>
+                  2. Verify power supply to lighting system<br>
+                  3. Inspect for dust accumulation on lenses<br>
+                  4. Review LED aging or thermal drift<br>
+                  5. Consider maintenance schedule adjustment
+                </p>
+              </div>
+              <p style="color: #7F8C8D; font-size: 0.9em; margin-top: 20px;">
+                This is an automated alert from the Light Intensity Monitoring System
+                for Food and Beverage Optical Inspection.
               </p>
             </div>
           `,
           text: `
-Light Level Alert
+⚠️ LIGHT INTENSITY ALERT - OPTICAL INSPECTION SYSTEM
 
-The light level has dropped below the threshold!
+Action Required: Light intensity has dropped below operational threshold.
+Inspection system accuracy may be compromised.
 
-Current Light Level: ${newValue}
-Previous Light Level: ${previousValue}
-Threshold: 1800
-Alert Time: ${timestamp}
+Inspection System Details:
+- Current Light Level: ${newValue} (ADC value, range: 0-4095)
+- Previous Light Level: ${previousValue}
+- Operational Threshold: 1800
+- Status: BELOW THRESHOLD
+- Alert Time: ${timestamp}
 
-Automated alert from IoT Smart Home system.
+Recommended Actions:
+1. Check inspection system lighting fixtures
+2. Verify power supply to lighting system
+3. Inspect for dust accumulation on lenses
+4. Review LED aging or thermal drift
+5. Consider maintenance schedule adjustment
+
+This is an automated alert from the Light Intensity Monitoring System
+for Food and Beverage Optical Inspection.
           `,
         };
 

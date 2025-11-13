@@ -1,10 +1,10 @@
 # Email Notification Setup Guide
 
-This guide explains how to set up email notifications when the photoresistor value drops below 1800.
+This guide explains how to set up email notifications for the Light Intensity Monitoring System used in food and beverage optical inspection environments.
 
 ## Overview
 
-The system uses Firebase Cloud Functions to monitor the light sensor value in real-time. When the value drops below 1800, an email is automatically sent to `sameersah7365@gmail.com`.
+The system uses Firebase Cloud Functions to monitor light intensity in real-time. When the light level drops below the operational threshold (1800), an email alert is automatically sent to operators or maintenance personnel. This ensures timely response to lighting degradation before it impacts inspection accuracy.
 
 ## Prerequisites
 
@@ -108,31 +108,35 @@ npm run deploy
 1. Go to Firebase Console → Realtime Database
 2. Navigate to `/sensors/light`
 3. Change value from above 1800 to below 1800 (e.g., 1500)
-4. Check email inbox at `sameersah7365@gmail.com`
-5. You should receive an email within a few seconds
+4. Check email inbox at configured recipient
+5. You should receive an email within a few seconds with alert details
 
 ### Test 2: Using Test Function
 
-1. Deploy includes a test function
+1. Deploy includes a test function for email verification
 2. Get the function URL from Firebase Console
 3. Visit the URL in browser or use curl:
    ```bash
    curl https://YOUR_REGION-YOUR_PROJECT.cloudfunctions.net/testEmail
    ```
 
-### Test 3: Real Sensor Data
+### Test 3: Real Production Scenario
 
 1. Ensure ESP32 is running and publishing to Firebase
-2. Cover the photoresistor to drop light level below 1800
-3. Email should be sent automatically
+2. Simulate lighting degradation (cover photoresistor or reduce light source)
+3. When light level drops below 1800, email alert should be sent automatically
+4. Verify RED LED activates on ESP32 (visual confirmation)
+5. Check email for alert notification
 
 ## How It Works
 
-1. ESP32 publishes light sensor value to `/sensors/light` in Firebase
-2. Cloud Function `sendLightAlert` monitors this path
-3. When value changes from ≥1800 to <1800, function triggers
-4. Function sends email using Nodemailer via Gmail SMTP
-5. Email delivered to `sameersah7365@gmail.com`
+1. **ESP32 monitors light intensity** at the inspection station (every 2 seconds)
+2. **ESP32 publishes** light sensor value to `/sensors/light` in Firebase
+3. **Cloud Function `sendLightAlert`** monitors this path continuously
+4. **When threshold breached**: Value changes from ≥1800 to <1800, function triggers
+5. **Email notification sent** using Nodemailer via Gmail SMTP
+6. **Alert delivered** to configured recipient (operators/maintenance personnel)
+7. **Action required**: Maintenance team can respond before inspection accuracy is compromised
 
 ## Monitoring
 

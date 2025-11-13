@@ -56,8 +56,8 @@ function App() {
         <div className="header-content">
           <div className="header-icon">💡</div>
           <div>
-            <h1>Light Monitoring System</h1>
-            <p>Real-time light level tracking and analysis</p>
+            <h1>Light Intensity Monitoring System</h1>
+            <p>Food & Beverage Optical Inspection - Real-time illumination monitoring</p>
           </div>
         </div>
       </header>
